@@ -89,7 +89,7 @@ export class APIClient {
       //   );
       // If it's a GET request like /workflows/run-by-doi?doi=<DOI_STRING>
       const response = await this.client.get<DoiResolutionResponse>(
-        `${endpoint}/{encodeURIComponent(doi)}/content`,
+        `${endpoint}/${encodeURIComponent(doi)}/content`,
       );
       return response.data;
     } catch (error) {

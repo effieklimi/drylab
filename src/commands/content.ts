@@ -28,20 +28,20 @@ export default class Content extends Command {
   async run(): Promise<void> {
     const { args } = await this.parse(Content); // 'this.parse(Content)' is correct here
 
-    const apiBaseUrl = getConfigValue("apiBaseUrl");
-    // IMPORTANT: Ensure this defaultApiUrl matches the actual default in your config-service.ts
-    const defaultApiUrl = "https://api.drylab.bio";
-    // It's better to get the default from your configService if possible, or ensure they are identical.
-    // For example, if your configService.ts has:
-    // const schema = { apiBaseUrl: { default: 'https://your-default-api.example.com' } }
-    // Then use that same default here.
+    // const apiBaseUrl = getConfigValue("apiBaseUrl");
+    // // IMPORTANT: Ensure this defaultApiUrl matches the actual default in your config-service.ts
+    // const defaultApiUrl = "https://api.drylab.bio";
+    // // It's better to get the default from your configService if possible, or ensure they are identical.
+    // // For example, if your configService.ts has:
+    // // const schema = { apiBaseUrl: { default: 'https://your-default-api.example.com' } }
+    // // Then use that same default here.
 
-    if (!apiBaseUrl || apiBaseUrl === defaultApiUrl) {
-      this.error(
-        `API base URL is not configured or is set to the default. Please run 'drylab configure apiBaseUrl <YOUR_API_URL>' or 'drylab login'.\nYour current API base URL is: ${apiBaseUrl}`,
-        { exit: 1 },
-      );
-    }
+    // if (!apiBaseUrl || apiBaseUrl === defaultApiUrl) {
+    //   this.error(
+    //     `API base URL is not configured or is set to the default. Please run 'drylab configure apiBaseUrl <YOUR_API_URL>' or 'drylab login'.\nYour current API base URL is: ${apiBaseUrl}`,
+    //     { exit: 1 },
+    //   );
+    // }
 
     this.log(`Processing DOI for content: ${args.doiString}...`); // Updated log message
 
