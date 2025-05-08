@@ -1,7 +1,7 @@
 {
   "name": "drylab",
   "description": "A CLI for drylab agentic workflows",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": "Effie Klimi <effie@effie.bio>",
   "bin": {
     "drylab": "./bin/run.js"
