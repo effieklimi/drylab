@@ -20,7 +20,7 @@ $ npm install -g drylab
 $ drylab COMMAND
 running command...
 $ drylab (--version)
-drylab/0.1.1 darwin-arm64 node-v21.4.0
+drylab/0.1.2 darwin-arm64 node-v21.4.0
 $ drylab --help [COMMAND]
 USAGE
   $ drylab COMMAND
@@ -29,6 +29,9 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`drylab content DOISTRING`](#drylab-content-doistring)
+* [`drylab hello PERSON`](#drylab-hello-person)
+* [`drylab hello:world`](#drylab-helloworld)
 * [`drylab help [COMMAND]`](#drylab-help-command)
 * [`drylab plugins`](#drylab-plugins)
 * [`drylab plugins:add PLUGIN`](#drylab-pluginsadd-plugin)
@@ -40,6 +43,70 @@ USAGE
 * [`drylab plugins:uninstall [PLUGIN]`](#drylab-pluginsuninstall-plugin)
 * [`drylab plugins:unlink [PLUGIN]`](#drylab-pluginsunlink-plugin)
 * [`drylab plugins:update`](#drylab-pluginsupdate)
+
+## `drylab content DOISTRING`
+
+Retrieves content or triggers a workflow using a Digital Object Identifier (DOI).
+
+```
+USAGE
+  $ drylab content DOISTRING
+
+ARGUMENTS
+  DOISTRING  The Digital Object Identifier (DOI) to use.
+
+DESCRIPTION
+  Retrieves content or triggers a workflow using a Digital Object Identifier (DOI).
+
+EXAMPLES
+  $ drylab content 10.1371/journal.pone.0018882
+
+  $ drylab content "10.1000/some complex/doi with spaces"
+```
+
+_See code: [src/commands/content.ts](https://github.com/effieklimi/drylab/blob/v0.1.2/src/commands/content.ts)_
+
+## `drylab hello PERSON`
+
+Say hello
+
+```
+USAGE
+  $ drylab hello PERSON -f <value>
+
+ARGUMENTS
+  PERSON  Person to say hello to
+
+FLAGS
+  -f, --from=<value>  (required) Who is saying hello
+
+DESCRIPTION
+  Say hello
+
+EXAMPLES
+  $ drylab hello friend --from oclif
+  hello friend from oclif! (./src/commands/hello/index.ts)
+```
+
+_See code: [src/commands/hello/index.ts](https://github.com/effieklimi/drylab/blob/v0.1.2/src/commands/hello/index.ts)_
+
+## `drylab hello:world`
+
+Say hello world
+
+```
+USAGE
+  $ drylab hello:world
+
+DESCRIPTION
+  Say hello world
+
+EXAMPLES
+  $ drylab hello:world
+  hello world! (./src/commands/hello/world.ts)
+```
+
+_See code: [src/commands/hello/world.ts](https://github.com/effieklimi/drylab/blob/v0.1.2/src/commands/hello/world.ts)_
 
 ## `drylab help [COMMAND]`
 
