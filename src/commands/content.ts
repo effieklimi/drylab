@@ -1,7 +1,5 @@
-// src/commands/run.ts
 import { Command, Args } from "@oclif/core";
-import { APIClient, type DoiResolutionResponse } from "./../api-client.ts"; // Adjust path if needed
-import { getConfigValue } from "./../config-service.ts"; // For checking config
+import { APIClient, type DoiResolutionResponse } from "./../api-client.js";
 
 export default class Content extends Command {
   static description =

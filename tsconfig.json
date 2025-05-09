@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "ESNext",
+    "module": "node16",
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": "./src",
     "strict": true,
     "target": "es2022",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node16",
 
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+    "sourceMap": true,
+
+    "emitDeclarationOnly": false,
     // Best practices
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
@@ -21,6 +24,7 @@
     "noPropertyAccessFromIndexSignature": false
   },
   "include": ["./src/**/*"],
+  "exclude": ["node_modules", "test", "dist"],
   "ts-node": {
     "esm": true
   }

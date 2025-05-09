@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, AxiosError } from "axios";
-import { getConfig } from "./config-service.ts"; // We'll create this next
+import { getConfig } from "./config-service.js"; // We'll create this next
 
 export interface DoiResolutionResponse {
   // Define what your API returns for a DOI resolution
