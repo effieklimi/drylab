@@ -32,13 +32,13 @@ USAGE
 * [`drylab content <PAPER_DOI>`](#drylab-content-doistring)
 
 
-## `drylab content DOISTRING`
+## `drylab content PAPER_DOI`
 
 Retrieves content or triggers a workflow using a Digital Object Identifier (DOI).
 
 ```
 USAGE
-  $ drylab content DOISTRING
+  $ drylab content PAPER_DOI
 
 ARGUMENTS
   DOISTRING  The Digital Object Identifier (DOI) to use.
@@ -49,7 +49,7 @@ DESCRIPTION
 EXAMPLES
   $ drylab content 10.1371/journal.pone.0018882
 
-  $ drylab content "10.1000/some complex/doi with spaces"
+  $ drylab content "10.1000/another doi/with weird characters"
 ```
 
 _See code: [src/commands/content.ts](https://github.com/effieklimi/drylab/blob/v0.1.2/src/commands/content.ts)_
