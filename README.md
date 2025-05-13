@@ -1,7 +1,7 @@
 drylab
 =================
 
-A CLI for drylab agentic workflows
+A CLI for using Drylab's agentic workflows locally
 
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
