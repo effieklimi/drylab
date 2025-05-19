@@ -18,4 +18,4 @@ $ brew tap effieklimi/drylab
 $ brew install drylab
 ```
 # Documentation
-Up-to-date documentation can be found here[https://drylab.gitbook.io/drylab]
+Up-to-date documentation can be found [here](https://drylab.gitbook.io/drylab).
