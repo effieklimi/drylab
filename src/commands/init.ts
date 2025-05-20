@@ -14,6 +14,11 @@ type Config = {
   paperLicense?: string;
   pdfSourceFilename?: string;
   pmcid?: string;
+  dataDir?: string;
+  codeDir?: string;
+  outputDir?: string;
+  logDir?: string;
+  envFile?: string;
 };
 
 export default class Init extends Command {
@@ -32,7 +37,10 @@ export default class Init extends Command {
   static flags = {
     doi: Flags.string({ description: "DOI to reproduce from" }),
     pdf: Flags.string({ description: "Local path to a paper PDF" }),
-    apiKey: Flags.string({ description: "Your API key (optional)" }),
+    apiKey: Flags.string({
+      description:
+        "The name of the viariable you have saved your API key under in your .env file (optional)",
+    }),
     overwrite: Flags.boolean({
       default: false,
       description: "Overwrite existing project dir",
@@ -79,9 +87,15 @@ export default class Init extends Command {
 
     if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
     mkdirSync(path.join(targetDir, "data"), { recursive: true });
+    config.dataDir = "./data";
     mkdirSync(path.join(targetDir, "code"), { recursive: true });
+    config.codeDir = "./code";
     mkdirSync(path.join(targetDir, "output"), { recursive: true });
+    config.outputDir = "./output";
     mkdirSync(path.join(targetDir, "logs"), { recursive: true });
+    config.logDir = "./logs";
+
+    config.apiKey = apiKey;
 
     if (source === "pdf" && pdf !== undefined)
       config.pdfPath = path.resolve(pdf);

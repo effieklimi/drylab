@@ -17,5 +17,8 @@ pnpm-lock.yaml
 !.yarn/sdks
 !.yarn/versions
 
+.env
 
+.env.local
+.paper.pdf
 
