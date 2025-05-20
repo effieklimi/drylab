@@ -18,7 +18,7 @@ type Config = {
   codeDir?: string;
   outputDir?: string;
   logDir?: string;
-  envFile?: string;
+  envFileName?: string;
 };
 
 export default class Init extends Command {
@@ -27,7 +27,7 @@ export default class Init extends Command {
 
   static examples = [
     `$ drylab init my-project --doi 10.1038/s41592-020-01005-z`,
-    `$ drylab init my-project --pdf ./paper.pdf --api-key sk-abc123`,
+    `$ drylab init my-project --pdf ./paper.pdf --api-key GEMINI_API_KEY`,
   ];
 
   static args = {
@@ -39,11 +39,11 @@ export default class Init extends Command {
     pdf: Flags.string({ description: "Local path to a paper PDF" }),
     apiKey: Flags.string({
       description:
-        "The name of the viariable you have saved your API key under in your .env file (optional)",
+        "The name of the viariable you have saved your Gemini API key under in your .env file (optional)",
     }),
-    overwrite: Flags.boolean({
-      default: false,
-      description: "Overwrite existing project dir",
+    envFile: Flags.string({
+      description: "The path to your .env file (optional)",
+      default: ".env",
     }),
   };
 
@@ -56,7 +56,7 @@ export default class Init extends Command {
     const { args, flags } = await this.parse(Init);
     const apiClient = new APIClient();
     const { projectName } = args;
-    const { doi, pdf, apiKey, overwrite } = flags;
+    const { doi, pdf, apiKey, envFile } = flags;
 
     // handle input validation and prioritization
     const config: Config = {};
@@ -66,12 +66,12 @@ export default class Init extends Command {
       const result: GetDoiResponse = await apiClient.createConfigInit(pdf);
       config.doi = result.doi;
       config.pdfPath = pdf;
-      config.paperTitle = result.paper_title;
-      config.paperJournal = result.paper_journal;
+      //   config.paperTitle = result.paper_title;
+      //   config.paperJournal = result.paper_journal;
       config.paperYear = result.paper_year;
       config.paperOaStatus = result.paper_oa_status;
       config.paperLicense = result.paper_license;
-      config.pdfSourceFilename = result.pdf_source_filename;
+      //   config.pdfSourceFilename = result.pdf_source_filename;
       config.pmcid = result.pmcid;
     } else if (doi) {
       source = "doi";
@@ -79,13 +79,15 @@ export default class Init extends Command {
     }
 
     const targetDir = path.resolve(process.cwd(), projectName);
-    if (existsSync(targetDir) && !overwrite) {
+    if (existsSync(targetDir)) {
       this.error(
         `Directory "${projectName}" already exists. Use --overwrite to override.`,
       );
     }
 
     if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
+    mkdirSync(path.join(targetDir, "paper"), { recursive: true });
+    config.dataDir = "./paper";
     mkdirSync(path.join(targetDir, "data"), { recursive: true });
     config.dataDir = "./data";
     mkdirSync(path.join(targetDir, "code"), { recursive: true });
@@ -96,6 +98,7 @@ export default class Init extends Command {
     config.logDir = "./logs";
 
     config.apiKey = apiKey;
+    config.envFileName = "env.yaml";
 
     if (source === "pdf" && pdf !== undefined)
       config.pdfPath = path.resolve(pdf);
