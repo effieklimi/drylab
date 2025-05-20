@@ -1,5 +1,5 @@
 import { Command, Flags, Args } from "@oclif/core";
-import { APIClient, type DoiResolutionResponse } from "./../api-client.js";
+import { APIClient, type GetDoiResponse } from "./../api-client.js";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import path from "path";
 
@@ -7,6 +7,13 @@ type Config = {
   doi?: string;
   pdfPath?: string;
   apiKey?: string;
+  paperTitle?: string;
+  paperJournal?: string;
+  paperYear?: string;
+  paperOaStatus?: string;
+  paperLicense?: string;
+  pdfSourceFilename?: string;
+  pmcid?: string;
 };
 
 export default class Init extends Command {
@@ -38,31 +45,29 @@ export default class Init extends Command {
   // };
 
   async run(): Promise<void> {
-    // const apiBaseUrl = getConfigValue("apiBaseUrl");
-    // // IMPORTANT: Ensure this defaultApiUrl matches the actual default in your config-service.ts
-    // const defaultApiUrl = "https://api.drylab.bio";
-    // // It's better to get the default from your configService if possible, or ensure they are identical.
-    // // For example, if your configService.ts has:
-    // // const schema = { apiBaseUrl: { default: 'https://your-default-api.example.com' } }
-    // // Then use that same default here.
-
-    // if (!apiBaseUrl || apiBaseUrl === defaultApiUrl) {
-    //   this.error(
-    //     `API base URL is not configured or is set to the default. Please run 'drylab configure apiBaseUrl <YOUR_API_URL>' or 'drylab login'.\nYour current API base URL is: ${apiBaseUrl}`,
-    //     { exit: 1 },
-    //   );
-    // }
-
     const { args, flags } = await this.parse(Init);
-
+    const apiClient = new APIClient();
     const { projectName } = args;
     const { doi, pdf, apiKey, overwrite } = flags;
 
-    if (!doi && !pdf) {
-      this.error("You must provide either --doi or --pdf");
-    }
-    if (doi && pdf) {
-      this.error("Please provide only one of --doi or --pdf, not both");
+    // handle input validation and prioritization
+    const config: Config = {};
+    let source: "doi" | "pdf" | null = null;
+    if (pdf) {
+      source = "pdf";
+      const result: GetDoiResponse = await apiClient.createConfigInit(pdf);
+      config.doi = result.doi;
+      config.pdfPath = pdf;
+      config.paperTitle = result.paper_title;
+      config.paperJournal = result.paper_journal;
+      config.paperYear = result.paper_year;
+      config.paperOaStatus = result.paper_oa_status;
+      config.paperLicense = result.paper_license;
+      config.pdfSourceFilename = result.pdf_source_filename;
+      config.pmcid = result.pmcid;
+    } else if (doi) {
+      source = "doi";
+      config.doi = doi;
     }
 
     const targetDir = path.resolve(process.cwd(), projectName);
@@ -74,12 +79,13 @@ export default class Init extends Command {
 
     if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
     mkdirSync(path.join(targetDir, "data"), { recursive: true });
+    mkdirSync(path.join(targetDir, "code"), { recursive: true });
     mkdirSync(path.join(targetDir, "output"), { recursive: true });
     mkdirSync(path.join(targetDir, "logs"), { recursive: true });
 
-    const config: Config = {};
-    if (doi) config.doi = doi;
-    if (pdf) config.pdfPath = path.resolve(pdf);
+    if (source === "pdf" && pdf !== undefined)
+      config.pdfPath = path.resolve(pdf);
+    if (source === "doi" && doi !== undefined) config.doi = doi;
     if (apiKey) config.apiKey = apiKey;
 
     writeFileSync(
@@ -88,7 +94,9 @@ export default class Init extends Command {
     );
 
     this.log(`✅ Project "${projectName}" created at ${targetDir}`);
-    this.log(`→ Config: ${doi ? "DOI" : "PDF"} mode`);
+    if (!source) {
+      this.error("You must provide either --pdf or --doi...");
+    }
     this.log("→ You can now run `cd " + projectName + " && drylab reproduce`");
   }
 }

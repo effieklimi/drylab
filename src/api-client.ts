@@ -1,5 +1,8 @@
 import axios, { type AxiosInstance, AxiosError } from "axios";
 import { getConfig } from "./config-service.js"; // We'll create this next
+import FormData from "form-data";
+import fs from "fs";
+import path from "path";
 
 export interface DoiResolutionResponse {
   // Define what your API returns for a DOI resolution
@@ -10,6 +13,18 @@ export interface DoiResolutionResponse {
   [key: string]: any; // Allow other properties
 }
 
+export interface GetDoiResponse {
+  doi: string;
+  doi_url: string;
+  pdf_url: string;
+  paper_title: string;
+  paper_journal: string;
+  paper_year: string;
+  paper_oa_status: string;
+  paper_license: string;
+  pdf_source_filename: string;
+  pmcid?: string;
+}
 export class APIClient {
   private client: AxiosInstance;
 
@@ -91,6 +106,43 @@ export class APIClient {
       const response = await this.client.get<DoiResolutionResponse>(
         `${endpoint}/${encodeURIComponent(doi)}/content`,
       );
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createConfigInit(pdfPath: string): Promise<GetDoiResponse> {
+    const endpoint = `/api/v1/get-doi`;
+    const apiBaseUrlValue = getConfig().get("apiBaseUrl");
+    this.client.defaults.baseURL =
+      typeof apiBaseUrlValue === "string"
+        ? apiBaseUrlValue
+        : "https://api.drylab.bio";
+
+    // create form
+    const form = new FormData();
+    form.append("file", fs.createReadStream(pdfPath), path.basename(pdfPath));
+
+    // figure out token
+    const token = getConfig().get("apiToken");
+    const headers = {
+      ...form.getHeaders(), // sets Content-Type: MULTIPART/FORM-DATA; boundary=…
+      ...(typeof token === "string"
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
+    };
+    // const token = typeof tokenValue === "string" ? tokenValue : undefined;
+    // if (token) {
+    //   this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    // } else {
+    //   delete this.client.defaults.headers.common["Authorization"]; // Remove if no token
+    // }
+
+    try {
+      const response = await this.client.post<GetDoiResponse>(endpoint, form, {
+        headers,
+      });
       return response.data;
     } catch (error) {
       this.handleError(error);
