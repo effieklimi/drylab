@@ -7,9 +7,8 @@ An open-source CLI for using Drylab's agentic workflows locally
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 
 <!-- toc -->
-<!-- * [Install](#install)
-* [Usage](#usage)
-* [Commands](#commands)  -->
+* [Install](#install)
+* [Documentation](#documentation)
 <!-- tocstop -->
 # Install
 <!-- install -->

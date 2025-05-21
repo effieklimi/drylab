@@ -25,6 +25,26 @@ export interface GetDoiResponse {
   pdf_source_filename: string;
   pmcid?: string;
 }
+
+export interface CreateCondaEnvResponsePDF {
+  doi: string;
+  pdf_url: string;
+  pdf_source_filename: string;
+  pmcid: string;
+  software_tools: string[];
+  software_tools_normalized: string[];
+  conda_yaml: string;
+}
+
+export interface CreateCondaEnvResponseDOI {
+  doi: string;
+  pdf_url: string;
+  pdf_source_filename: string;
+  pmcid: string;
+  software_tools: string[];
+  software_tools_normalized: string[];
+  conda_yaml: string;
+}
 export class APIClient {
   private client: AxiosInstance;
 
@@ -143,6 +163,76 @@ export class APIClient {
       const response = await this.client.post<GetDoiResponse>(endpoint, form, {
         headers,
       });
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createCondaEnvPDF(pdfPath: string): Promise<CreateCondaEnvResponsePDF> {
+    const endpoint = `/api/v1/create-conda-env`;
+    const apiBaseUrlValue = getConfig().get("apiBaseUrl");
+    this.client.defaults.baseURL =
+      typeof apiBaseUrlValue === "string"
+        ? apiBaseUrlValue
+        : "https://api.drylab.bio";
+
+    // create form
+    const form = new FormData();
+    form.append("file", fs.createReadStream(pdfPath), path.basename(pdfPath));
+
+    // figure out token
+    const token = getConfig().get("apiToken");
+    const headers = {
+      ...form.getHeaders(), // sets Content-Type: MULTIPART/FORM-DATA; boundary=…
+      ...(typeof token === "string"
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
+    };
+
+    try {
+      const response = await this.client.post<CreateCondaEnvResponsePDF>(
+        endpoint,
+        form,
+        {
+          headers,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createCondaEnvDOI(doi: string): Promise<CreateCondaEnvResponseDOI> {
+    const endpoint = `/api/v1/create-conda-env`;
+    const apiBaseUrlValue = getConfig().get("apiBaseUrl");
+    this.client.defaults.baseURL =
+      typeof apiBaseUrlValue === "string"
+        ? apiBaseUrlValue
+        : "https://api.drylab.bio";
+
+    // create form
+    const form = new FormData();
+    form.append("doi", fs.createReadStream(doi), path.basename(doi));
+
+    // figure out token
+    const token = getConfig().get("apiToken");
+    const headers = {
+      ...form.getHeaders(), // sets Content-Type: MULTIPART/FORM-DATA; boundary=…
+      ...(typeof token === "string"
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
+    };
+
+    try {
+      const response = await this.client.post<CreateCondaEnvResponsePDF>(
+        endpoint,
+        form,
+        {
+          headers,
+        },
+      );
       return response.data;
     } catch (error) {
       this.handleError(error);
